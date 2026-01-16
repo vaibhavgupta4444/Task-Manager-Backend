@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
-from ..database import Base
+from ..database.connection import Base
 
 class Task(Base):
     __tablename__ = "tasks"

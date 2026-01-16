@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
-from ..database import Base
+from ..database.connection import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -13,3 +13,16 @@ class User(Base):
     is_active = Column(Boolean, default=True)
 
     tasks = relationship("Task", back_populates="owner")
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False
+    )
+
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False
+    )

@@ -3,7 +3,7 @@ from app.schemas import UserCreate
 from sqlalchemy.orm import Session
 from app.dependencies import get_db
 from app.models import User
-from app.auth import get_password_hash, create_access_token, verify_password
+from app.core.security import get_password_hash, create_access_token, verify_password
 from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter(
@@ -11,7 +11,7 @@ router = APIRouter(
     tags=["users"]
 )
 
-@router.post("/")
+@router.post("/register")
 def create_user(user: UserCreate,
                 db: Session = Depends(get_db)):
     is_user_exist = db.query(User).filter(User.email == user.email).first()
