@@ -16,5 +16,5 @@ class TaskRead(BaseModel):
     title: str
     description: Optional[str] = None
     completed: bool
-    owner_id: int
+
     model_config = ConfigDict(from_attributes=True)

@@ -14,6 +14,7 @@ class UserRead(BaseModel):
     email: EmailStr
     role: str
     is_active: bool
+    tasks: List[TaskRead] = []
     model_config = ConfigDict(from_attributes=True)
 
 

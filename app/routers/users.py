@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from app.schemas import UserCreate
-from sqlalchemy.orm import Session
-from app.dependencies import get_db
+from app.schemas import UserCreate, UserRead
+from sqlalchemy.orm import Session, selectinload
+from app.dependencies import get_db, get_current_user
 from app.models import User
 from app.core.security import get_password_hash, create_access_token, verify_password
 from fastapi.security import OAuth2PasswordRequestForm
@@ -11,6 +11,20 @@ router = APIRouter(
     tags=["users"]
 )
 
+# protected route
+@router.get("/")
+def fetch_users(db: Session = Depends(get_db),
+                current_user: str = Depends(get_current_user)):
+    is_admin = db.query(User).filter(User.id == current_user['sub'], User.role == 'admin').first()
+
+    if not is_admin:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="only admin can access these routes")
+    
+    all_users = db.query(User).options(selectinload(User.tasks)).all()
+    return all_users
+
+
+# Public routes
 @router.post("/register")
 def create_user(user: UserCreate,
                 db: Session = Depends(get_db)):
